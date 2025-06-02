@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Facial</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h2>Login Facial</h2>
+    <form id="login-face-form">
+        {% csrf_token %}
+        <input type="text" name="username" id="username" placeholder="Nombre de usuario" required>
+        <div id="camera-container">
+            <!-- Aquí va el código para activar la cámara y capturar la imagen -->
+            <video id="video" width="320" height="240" autoplay></video>
+            <button type="button" id="capture" onclick="captureFace()">Capturar Rostro</button>
+        </div>
+        <button type="submit">Iniciar Sesión</button>
+    </form>
+
+    <div id="response-message" style="display:none;"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Función para obtener el token CSRF de las cookies
+        function getCSRFToken() {
+            var name = 'csrftoken';
+            var value = document.cookie.match('(^|;)\\s*' + name + '=([^;]*)');
+            return value ? value.pop() : '';
+        }
+
+        // Función para capturar la imagen facial (utilizando la API de la cámara)
+        function captureFace() {
+            const video = document.getElementById('video');
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/jpeg');
+            
+            // Aquí puedes procesar el descriptor facial y pasarlo a la solicitud
+            $('#face_image').val(imageData);  // Asegúrate de agregar un input oculto para almacenar la imagen
+        }
+
+        // Enviar formulario con AJAX
+        $('#login-face-form').submit(function (event) {
+            event.preventDefault();  // Evita que el formulario se envíe de manera tradicional
+
+            var formData = new FormData(this);
+            var faceData = {};  // Aquí debes capturar y agregar los datos faciales reales
+
+            faceData['username'] = formData.get('username');
+            faceData['face_data'] = "captured_face_data";  // Aquí debes capturar los datos faciales reales
+
+            $.ajax({
+                url: "{% url 'security:face_login' %}",
+                type: "POST",
+                data: JSON.stringify({
+                    username: faceData.username,
+                    face_data: faceData.face_data
+                }),
+                contentType: "application/json",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", getCSRFToken());  // Enviar el token CSRF
+                },
+                success: function(response) {
+                    $('#response-message').text(response.message).css('color', 'green').show();
+                    if (response.success) {
+                        window.location.href = response.redirect_url;  // Redirigir al usuario si el login es exitoso
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#response-message').text(xhr.responseJSON.message).css('color', 'red').show();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ title1 }} - Mi Aplicación
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="form-wrapper">
+        <section class="form-section">
+            <div class="header">
+                <h1 class="title">{{ title2 }}</h1>
+                <p class="subtitle">¡Bienvenido de vuelta! </p>
+            </div>
+            <!-- Avatar Image -->
+            <div class="avatar">
+                <img src="{% static 'img/login.png' %}" alt="Signin">
+            </div>
+
+            <!-- Form -->
+            <form method="POST" enctype="multipart/form-data" class="form">
+                {% csrf_token %}
+
+                <!-- Username Field -->
+                <div class="form-field">
+                    <label for="{{ form.username.id_for_label }}" class="label">
+                        {{ form.username.label }}
+                    </label>
+                    <div class="input-container">
+                        <span class="icon"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" id="id_username" name="username" class="input" placeholder="Ingresa tu usuario">
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-field">
+                    <label for="{{ form.password.id_for_label }}" class="label">
+                        {{ form.password.label }}
+                    </label>
+                    <div class="input-container">
+                        <span class="icon"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" id="id_password" name="password" class="input" placeholder="Ingresa tu contraseña">
+                        <button type="button" id="togglePassword" class="toggle-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="submit-btn">
+                    <button type="submit" class="btn-submit">Iniciar Sesión</button>
+                </div>
+            </form>
+            <p class="register-link">
+                ¿No tienes una cuenta? 
+                <a href="{% url 'security:register_face' %}" class="link">Login Biometrico</a>
+            </p>
+            <!-- Register Link -->
+            <p class="register-link">
+                ¿No tienes una cuenta? 
+                <a href="{% url 'security:auth_register' %}" class="link">Regístrate aquí</a>
+            </p>
+        </section>
+    </div>
+</div>
+
+<script>
+    document.getElementById("togglePassword").addEventListener("click", function() {
+        const passwordInput = document.getElementById("id_password");
+        const icon = this.querySelector("i");
+        
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    });
+</script>
+
+{% endblock content %}
+
+{% block css %}
+<style>
+    /* General Container */
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(to bottom right, #d0e8fc, #8a99d7);
+        padding: 20px;
+    }
+
+    .form-wrapper {
+        width: 100%;
+        max-width: 400px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Header */
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .subtitle {
+        font-size: 14px;
+        color: #666;
+    }
+
+    /* Avatar */
+    .avatar {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .avatar img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 4px solid #a7d4e9;
+    }
+
+    /* Form */
+    .form {
+        display: flex;
+        flex-direction: column;
+        
+    }
+
+    /* Form Field */
+    .form-field {
+        margin-bottom: 20px;
+        
+    }
+
+    .label {
+        font-size: 12px;
+        color: #444;
+        margin-bottom: 5px;
+        text-align: left;
+        
+    }
+
+    .input-container {
+        position: relative;
+        border: 4px solid #a7d4e9;
+    }
+
+    .input {
+        width: 100%;
+        height: 40px;
+        padding-left: 30px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background: #f8f8f8;
+        font-size: 14px;
+        color: #555;
+        transition: border-color 0.3s;
+    }
+
+    .input:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .icon {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        color: #007bff;
+    }
+
+    .toggle-password {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #777;
+        cursor: pointer;
+    }
+
+    .btn-submit {
+        width: 100%;
+        height: 40px;
+        background: linear-gradient(to right, #007bff, #0056b3);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-submit:hover {
+        background-color: #004080;
+    }
+
+    .register-link {
+        text-align: center;
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    .link {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .link:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}

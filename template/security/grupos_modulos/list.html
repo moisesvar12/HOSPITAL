@@ -1,0 +1,235 @@
+{% extends 'components/base.html' %}
+{% block content %}
+{% load static %}
+
+<title>{% block title %}{{ title1 }}{% endblock title %}</title>
+
+<style>
+    .content-section {
+        background-color: #f8f9fa;
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+    
+    .search-container {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .search-input {
+        border: 2px solid #e9ecef;
+        border-radius: 50px;
+        padding: 0.75rem 1.5rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        outline: none;
+    }
+    
+    .module-card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .module-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    
+    .badge-custom {
+        background-color: #e9ecef;
+        color: #495057;
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+    }
+    
+    .btn-action {
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .pagination {
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .page-link {
+        border-radius: 50% !important;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 0.25rem;
+    }
+    
+    .page-link.active {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+    
+    .modal-custom {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1050;
+    }
+    
+    .modal-custom.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-content-custom {
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        max-width: 500px;
+        width: 90%;
+    }
+</style>
+
+<section class="content-section">
+    <div class="container">
+        <!-- Header Section -->
+        <div class="text-center mb-5">
+            <span class="badge-custom">{{ title1 }}</span>
+            <h1 class="display-5 mt-3 fw-bold">{{ title2 }}</h1>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container mb-5">
+            <form method="GET" action="{% url 'security:groupmodulepermission_list' %}" class="d-flex">
+                <input type="text" 
+                       name="q" 
+                       class="search-input"
+                       placeholder="Búsqueda sin límites" 
+                       value="{{ request.GET.q }}"
+                       aria-label="Search">
+            </form>
+        </div>
+
+        <!-- Modules Grid -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for item in groupmodulepermissions %}
+            <div class="col">
+                <div class="module-card">
+                    <div class="d-flex flex-column h-100">
+                        <div>
+                            <h5 class="fw-bold mb-3">ID: {{ item.id }}</h5>
+                            <p class="mb-2"><span class="fw-semibold">Módulo:</span> {{ item.module.name }}</p>
+                            <p class="mb-3"><span class="fw-semibold">Grupo:</span> {{ item.group.name }}</p>
+                        </div>
+                        {% if permissions.change_groupmodulepermission %}
+                        <div class="mt-auto pt-3 border-top d-flex gap-2 justify-content-center">
+                            <a href="{% url 'security:groupmodulepermission_update' item.id %}" 
+                               class="btn btn-outline-primary btn-action">
+                                <i class="bi bi-pencil-square me-2"></i>Editar
+                            </a>
+                            <button class="btn btn-outline-danger btn-action" 
+                                    onclick="openDeleteModal('{{ item.id }}', '{{ item.get_full_name }}')">
+                                <i class="bi bi-trash me-2"></i>Eliminar
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        <nav class="mt-5">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <!-- Action Buttons -->
+        <div class="text-center mt-5">
+            {% if permissions.add_module %}
+            <a href="{% url 'security:groupmodulepermission_create' %}" 
+               class="btn btn-primary btn-lg btn-action me-3">
+                <i class="bi bi-plus-circle me-2"></i>Nuevo Grupo-Módulo
+            </a>
+            {% endif %}
+            <a href="{% url 'security:groupmodulepermission_list' %}" 
+               class="btn btn-outline-secondary btn-lg btn-action">
+                <i class="bi bi-house me-2"></i>Inicio
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Delete Modal -->
+<div class="modal-custom" id="deleteModal">
+    <div class="modal-content-custom">
+        <h4 class="mb-4 text-center">Confirmar Eliminación</h4>
+        <form method="POST" id="deleteForm">
+            {% csrf_token %}
+            <div id="Description" class="alert alert-warning text-center mb-4"></div>
+            <div class="d-flex justify-content-center gap-3">
+                <button type="button" class="btn btn-secondary btn-action" onclick="closeModal()">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-danger btn-action">
+                    Confirmar Eliminación
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openDeleteModal(id, name) {
+        const modal = document.getElementById('deleteModal');
+        const deleteForm = document.getElementById('deleteForm');
+        deleteForm.action = "{% url 'security:groupmodulepermission_delete' 999 %}".replace('999', id);
+        document.getElementById('Description').textContent = `¿Estás seguro de eliminar el elemento: ${id} - ${name}?`;
+        modal.classList.add('show');
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.classList.remove('show');
+    }
+</script>
+{% endblock %}
+
+

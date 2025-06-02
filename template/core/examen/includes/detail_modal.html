@@ -1,0 +1,38 @@
+<!-- templates/includes/examen_detail_modal.html -->
+<div class="modal fade" id="examenModal" tabindex="-1" aria-labelledby="examenModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary bg-opacity-75">
+                <h5 class="modal-title text-white fw-bold" id="examenModalLabel">
+                    <i class="fas fa-file-medical-alt me-2"></i>Detalles del Examen
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Columna para los datos del examen -->
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong><i class="fas fa-id-card me-2"></i>ID del Examen:</strong> <span id="examen-id"></span></p>
+                                <p><strong><i class="fas fa-calendar-day me-2"></i>Fecha del Examen:</strong> <span id="examen-fecha"></span></p>
+                                <p><strong><i class="fas fa-user me-2"></i>Paciente:</strong> <span id="examen-paciente"></span></p>
+                                <p><strong><i class="fas fa-check-circle me-2"></i>Tipo de Examen:</strong> <span id="examen-tipo"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong><i class="fas fa-notes-medical me-2"></i>Descripción:</strong> <span id="examen-descripcion"></span></p>
+                                <p><strong><i class="fas fa-notepad me-2"></i>Resultados:</strong> <span id="examen-resultados"></span></p>
+                                <p><strong><i class="fas fa-check-circle me-2"></i>Estado:</strong> <span id="examen-estado"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

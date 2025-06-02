@@ -1,0 +1,56 @@
+<div class="modal fade" id="certificadoModal" tabindex="-1" aria-labelledby="certificadoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Encabezado del modal -->
+            <div class="modal-header bg-primary bg-opacity-75">
+                <h5 class="modal-title text-white fw-bold" id="certificadoModalLabel">
+                    <i class="fas fa-file-alt me-2"></i>Detalles del Certificado
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Cuerpo del modal -->
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Información del paciente asociado -->
+                    <div class="col-md-12 mb-3">
+                        <h6 class="fw-bold text-secondary">
+                            <i class="fas fa-user-circle me-2"></i>Información del Paciente
+                        </h6>
+                        <p><strong><i class="fas fa-id-card me-2"></i>ID Paciente:</strong> <span id="certificado-paciente-id"></span></p>
+                        <p><strong><i class="fas fa-user me-2"></i>Nombres:</strong> <span id="certificado-paciente-nombres"></span></p>
+                        <p><strong><i class="fas fa-user me-2"></i>Apellidos:</strong> <span id="certificado-paciente-apellidos"></span></p>
+                        <p><strong><i class="fas fa-id-badge me-2"></i>DNI:</strong> <span id="certificado-paciente-dni"></span></p>
+                    </div>
+                </div>
+                <hr>
+                <!-- Información del certificado -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong><i class="fas fa-stethoscope me-2"></i>Diagnóstico:</strong> <span id="certificado-diagnostico"></span></p>
+                        <p><strong><i class="fas fa-pills me-2"></i>Tratamiento:</strong> <span id="certificado-tratamiento"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong><i class="fas fa-calendar-check me-2"></i>Fecha de Emisión:</strong> <span id="certificado-fecha-emision"></span></p>
+                        <p><strong><i class="fas fa-user-md me-2"></i>Médico Responsable:</strong> <span id="certificado-medico"></span></p>
+                    </div>
+                </div>
+                <hr>
+                <!-- Observaciones -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <h6 class="fw-bold text-secondary">
+                            <i class="fas fa-comment-dots me-2"></i>Observaciones
+                        </h6>
+                        <p id="certificado-observaciones"></p>
+                    </div>
+                </div>
+            </div>
+            <!-- Pie de página del modal -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

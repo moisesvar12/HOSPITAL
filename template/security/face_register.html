@@ -1,0 +1,61 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Facial</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h2>Registro Facial</h2>
+    <form id="register-face-form" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Registrar</button>
+    </form>
+
+    <div id="response-message" style="display:none;"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Función para obtener el token CSRF de las cookies
+        function getCSRFToken() {
+            var name = 'csrftoken';
+            var value = document.cookie.match('(^|;)\\s*' + name + '=([^;]*)');
+            return value ? value.pop() : '';
+        }
+
+        // Enviar formulario con AJAX
+        $('#register-face-form').submit(function (event) {
+            event.preventDefault();  // Evita que el formulario se envíe de manera tradicional
+
+            var formData = new FormData(this);
+            var faceData = {};  // Aquí debes capturar y agregar los datos faciales reales (puedes usar WebRTC o algún otro medio para obtener la imagen de la cámara)
+            faceData['username'] = formData.get('username');  // Asegúrate de agregar los datos necesarios
+            faceData['face_data'] = "some_face_data";  // Aquí debe ir el descriptor facial obtenido
+
+            $.ajax({
+                url: "{% url 'security:register_face' %}",
+                type: "POST",
+                data: JSON.stringify({
+                    username: faceData.username,
+                    face_data: faceData.face_data
+                }),
+                contentType: "application/json",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", getCSRFToken());  // Enviar el token CSRF
+                },
+                success: function(response) {
+                    $('#response-message').text(response.message).css('color', 'green').show();
+                },
+                error: function(xhr, status, error) {
+                    $('#response-message').text(xhr.responseJSON.message).css('color', 'red').show();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

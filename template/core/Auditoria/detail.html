@@ -1,0 +1,34 @@
+{% extends "components/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Detalles de Auditoría</h2>
+    <div class="card">
+        <div class="card-header">
+            <strong>Registro de Auditoría</strong>
+        </div>
+        <div class="card-body">
+            <p><strong>Usuario:</strong> {{ auditoria.usuario.username }}</p>
+            <p><strong>Tabla:</strong> {{ auditoria.tabla }}</p>
+            <p><strong>ID del Registro:</strong> {{ auditoria.registroid }}</p>
+            <p><strong>Acción:</strong> 
+                {% if auditoria.accion == 'A' %}
+                    Adición
+                {% elif auditoria.accion == 'M' %}
+                    Modificación
+                {% elif auditoria.accion == 'E' %}
+                    Eliminación
+                {% else %}
+                    Desconocida
+                {% endif %}
+            </p>
+            <p><strong>Fecha:</strong> {{ auditoria.fecha }}</p>
+            <p><strong>Hora:</strong> {{ auditoria.hora }}</p>
+            <p><strong>Estación:</strong> {{ auditoria.estacion }}</p>
+        </div>
+        <div class="card-footer text-end">
+            <a href="{% url 'core:auditoria_list' %}" class="btn btn-primary">Volver a la lista</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

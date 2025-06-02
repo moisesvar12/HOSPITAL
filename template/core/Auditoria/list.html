@@ -1,0 +1,47 @@
+{% extends "components/base.html" %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12 col-lg-12 px-md-4 main-content">
+        
+        <div class="card mb-4">
+          <div class="card-body">
+            <h3 class="text-primary-emphasis mb-4">Auditoría de Registros</h3>
+            
+            <!-- Formulario de búsqueda -->
+            <form method="GET" action="{% url 'core:auditoria_list' %}" class="d-flex gap-3 mb-4">
+              <input type="text" name="q" class="form-control" placeholder="Buscar por entidad..." value="{{ request.GET.q }}">
+            </form>
+
+            <!-- Tabla de auditoría -->
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Entidad</th>
+                  <th>Evento</th>
+                  <th>Usuario</th>
+                  <th>Fecha</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for auditoria in auditorias %}
+                  <tr>
+                    <td>{{ auditoria.entidad }}</td>
+                    <td>{{ auditoria.get_evento_display }}</td>
+                    <td>{{ auditoria.usuario.username }}</td>
+                    <td>{{ auditoria.fecha }}</td>
+                    <td>
+                      <a href="{% url 'core:auditoria_detail' auditoria.id %}" class="btn btn-primary btn-sm">Ver Detalles</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

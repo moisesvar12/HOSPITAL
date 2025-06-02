@@ -1,0 +1,75 @@
+{% extends "components/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">{% if object %}Editar{% else %}Agregar{% endif %} Cita Médica</h1>
+
+    <form method="post" class="bg-light p-4 rounded shadow">
+        {% csrf_token %}
+
+        <!-- Campo para el paciente -->
+        <div class="mb-3">
+            <label for="{{ form.paciente.id_for_label }}" class="form-label">Paciente</label>
+            <select name="paciente" id="{{ form.paciente.id_for_label }}" class="form-control" required>
+                <option value="">Seleccione un paciente</option>
+                {% for choice in form.paciente.field.queryset %}
+                    <option value="{{ choice.pk }}" {% if form.paciente.value == choice.pk %}selected{% endif %}>{{ choice }}</option>
+                {% endfor %}
+            </select>
+            {% if form.paciente.errors %}
+                <div class="text-danger mt-2">
+                    {% for error in form.paciente.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo para la fecha de la cita -->
+        <div class="mb-3">
+            <label for="{{ form.fecha.id_for_label }}" class="form-label">Fecha de la Cita</label>
+            <input type="date" name="fecha" id="{{ form.fecha.id_for_label }}" class="form-control" value="{{ form.fecha.value|default:'' }}" required>
+            {% if form.fecha.errors %}
+                <div class="text-danger mt-2">
+                    {% for error in form.fecha.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo para la hora de la cita -->
+        <div class="mb-3">
+            <label for="{{ form.hora_cita.id_for_label }}" class="form-label">Hora de la Cita</label>
+            <input type="time" name="hora_cita" id="{{ form.hora_cita.id_for_label }}" class="form-control" value="{{ form.hora_cita.value|default:'' }}" required>
+            {% if form.hora_cita.errors %}
+                <div class="text-danger mt-2">
+                    {% for error in form.hora_cita.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo para el estado de la cita -->
+        <div class="mb-3">
+            <label for="{{ form.estado.id_for_label }}" class="form-label">Estado de la Cita</label>
+            <select name="estado" id="{{ form.estado.id_for_label }}" class="form-control" required>
+                <option value="">Seleccione el estado</option>
+                {% for choice, display in form.estado.field.choices %}
+                    <option value="{{ choice }}" {% if form.estado.value == choice %}selected{% endif %}>{{ display }}</option>
+                {% endfor %}
+            </select>
+            {% if form.estado.errors %}
+                <div class="text-danger mt-2">
+                    {% for error in form.estado.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-success w-100 mb-2">Guardar Cita</button>
+        <a href="{% url 'core:cita_list' %}" class="btn btn-outline-secondary w-100">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

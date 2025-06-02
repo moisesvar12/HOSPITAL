@@ -1,0 +1,37 @@
+{% extends "components/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">
+        {% if object %}
+            Editar Ficha Clínica
+        {% else %}
+            Nueva Ficha Clínica
+        {% endif %}
+    </h1>
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            {% if object %}
+                <h5>Editar Información de la Ficha Clínica de {{ object.paciente.nombre_completo }}</h5>
+            {% else %}
+                <h5>Crear Nueva Ficha Clínica</h5>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.as_p }}
+                </div>
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <a href="{% url 'core:lista_fichas' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Carga de Bootstrap (v5.3) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMt23cez/1gfz5kts6sKKzFsrbMfYqqk/vz0f6g" crossorigin="anonymous">
+
+{% endblock %}

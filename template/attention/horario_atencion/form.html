@@ -1,0 +1,84 @@
+{% extends "components/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+<style>
+    .form-card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-top: 20px;
+    }
+    .form-card h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+    .form-card .btn {
+        border-radius: 20px;
+    }
+    .form-label {
+        color: #333;
+    }
+    .form-control:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <!-- Mensajes de error del formulario -->
+            {% include 'includes/message_error_form.html' %}
+            <!-- Formulario -->
+            <form method="post" enctype="multipart/form-data" class="form-card">
+                {% csrf_token %}
+                <h3 class="text-center text-primary mb-4">{{ title1 }}</h3>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.dia_semana.id_for_label }}" class="form-label">{{ form.dia_semana.label }}</label>
+                        {{ form.dia_semana }}
+                        <small class="text-danger">{{ form.dia_semana.errors }}</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.hora_inicio.id_for_label }}" class="form-label">{{ form.hora_inicio.label }}</label>
+                        {{ form.hora_inicio }}
+                        <small class="text-danger">{{ form.hora_inicio.errors }}</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.hora_fin.id_for_label }}" class="form-label">{{ form.hora_fin.label }}</label>
+                        {{ form.hora_fin }}
+                        <small class="text-danger">{{ form.hora_fin.errors }}</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.Intervalo_desde.id_for_label }}" class="form-label">{{ form.Intervalo_desde.label }}</label>
+                        {{ form.Intervalo_desde }}
+                        <small class="text-danger">{{ form.Intervalo_desde.errors }}</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.Intervalo_hasta.id_for_label }}" class="form-label">{{ form.Intervalo_hasta.label }}</label>
+                        {{ form.Intervalo_hasta }}
+                        <small class="text-danger">{{ form.Intervalo_hasta.errors }}</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="form-check">
+                            {{ form.activo }}
+                            <label class="form-check-label" for="{{ form.activo.id_for_label }}">
+                                {{ form.activo.label }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center mt-4">
+                    <button class="btn btn-primary me-2" type="submit">Guardar Horario</button>
+                    <a class="btn btn-secondary" href="{% url 'attention:horario_list' %}">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

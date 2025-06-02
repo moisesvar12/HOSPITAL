@@ -1,0 +1,252 @@
+{% extends 'components/base.html' %}
+{% block content %}
+    {% load static %}
+    <style>
+    .modall {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        overflow: auto;
+    }
+
+    .modal-contentt {
+        border: 2px solid #3B3BBA;
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 50%;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-box {
+        border-radius: 20px;
+        padding: 10px 20px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .search-box:focus {
+        border-color: #3B3BBA;
+        box-shadow: 0 0 0 0.25rem rgba(59, 59, 186, 0.25);
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #3B3BBA;
+    }
+
+    .btn-action {
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        padding: 0;
+        line-height: 35px;
+        text-align: center;
+        margin: 0 2px;
+    }
+
+    .groups-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .groups-list li {
+        padding: 8px;
+        margin: 5px 0;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+    }
+    </style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 px-md-4 main-content">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="card-title mb-0 text-primary-emphasis fw-bold">{{ title1 }}</h3>
+                        </div>
+
+                        <!-- Barra de búsqueda -->
+                        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between g-3 mb-4">
+                            <form method="GET" action="{% url 'security:users_list' %}" class="w-100 max-w-md">
+                                <input type="text" 
+                                       name="q" 
+                                       id="table-search"
+                                       class="form-control search-box"
+                                       autocomplete="off"
+                                       placeholder="Búscar usuario" 
+                                       value="{{ request.GET.q }}">
+                            </form>
+                        </div>
+
+                        <!-- Tabla Content -->
+                        <div class="table-responsive">
+                            <table class="table table-hover text-center align-middle">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Usuario</th>
+                                    <th>Email</th>
+                                    <th>Grupos</th>
+                                    <th>Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in users %}
+                                    <tr>
+                                        <td>{{ item.id }}</td>
+                                        <td>{{ item.username }}</td>
+                                        <td>
+                                            <a href="https://mail.google.com/mail/?view=cm&to={{ item.email }}"
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               class="text-decoration-none"
+                                               title="{{ item.email }}">
+                                                <i class="fas fa-envelope fa-lg" style="color: #3498DB"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {% if item.get_groups != "No pertenece a ningún grupo" %}
+                                                <i class="fa-brands fa-google fa-lg" 
+                                                   style="cursor: pointer; color: #3B3BBA"
+                                                   onclick="openGroupsModal('{{ item.get_groups }}')"></i>
+                                            {% else %}
+                                                {{ item.get_groups }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="d-flex justify-content-center gap-2">
+                                                {% if perms.auth.change_user %}
+                                                    <a href="{% url 'security:users_update' item.id %}"
+                                                       class="btn btn-info btn-action text-white" 
+                                                       title="Editar">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                {% endif %}
+
+                                                {% if perms.auth.delete_user %}
+                                                    <button class="btn btn-danger btn-action"
+                                                            title="Eliminar"
+                                                            onclick="openDeleteModal('{{ item.id }}', '{{ item.username }}')">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <nav class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">&laquo;</a>
+                                </li>
+                                {% endif %}
+                                
+                                {% for num in page_obj.paginator.page_range %}
+                                <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                                {% endfor %}
+                                
+                                {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modall" id="deleteModal">
+        <div class="modal-contentt">
+            <h4 class="mb-4">Confirmar Eliminación</h4>
+            <form method="POST" id="deleteForm">
+                {% csrf_token %}
+                <div id="Description" class="alert alert-warning text-center mb-4"></div>
+                <div class="d-flex justify-content-center gap-3">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Groups Modal -->
+    <div id="groupsModal" class="modall">
+        <div class="modal-contentt">
+            <h4 class="mb-4"><strong>Grupos del Usuario</strong></h4>
+            <ul id="groupsList" class="groups-list"></ul>
+            <button type="button" class="btn btn-secondary mt-3" onclick="closeGroupsModal()">
+                Cerrar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function openDeleteModal(id, name) {
+            const deleteForm = document.getElementById('deleteForm');
+            deleteForm.action = "{% url 'security:users_delete' 999 %}".replace('999', id);
+            document.getElementById('Description').textContent = `¿Está seguro de eliminar al usuario: ${name} (ID: ${id})?`;
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+
+        function openGroupsModal(groups) {
+            const modal = document.getElementById('groupsModal');
+            const list = document.getElementById('groupsList');
+            list.innerHTML = '';
+
+            const groupsArray = groups.split(',');
+            groupsArray.forEach(group => {
+                const li = document.createElement('li');
+                li.textContent = group.trim();
+                list.appendChild(li);
+            });
+
+            modal.style.display = 'block';
+        }
+
+        function closeGroupsModal() {
+            document.getElementById('groupsModal').style.display = 'none';
+        }
+
+        // Cerrar modales al hacer clic fuera
+        window.onclick = function(event) {
+            const deleteModal = document.getElementById('deleteModal');
+            const groupsModal = document.getElementById('groupsModal');
+            
+            if (event.target === deleteModal) {
+                deleteModal.style.display = 'none';
+            }
+            if (event.target === groupsModal) {
+                groupsModal.style.display = 'none';
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "components/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Lista de Fichas Clínicas</h1>
+    <a href="{% url 'core:crear_ficha' %}" class="btn btn-primary mb-3">Agregar Ficha Clínica</a>
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Paciente</th>
+                <th>Doctor</th>
+                <th>Fecha de Consulta</th>
+                <th>Diagnóstico</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ficha in fichas_clinicas %}
+                <tr>
+                    <td>{{ ficha.paciente.nombre_completo }}</td>
+                    <td>{{ ficha.doctor.nombre_completo }}</td>
+                    <td>{{ ficha.fecha_consulta|date:"d/m/Y" }}</td>
+                    <td>{{ ficha.diagnostico|default:"N/A" }}</td>
+                    <td>
+                        <a href="{% url 'core:detalle_ficha' ficha.pk %}" class="btn btn-info btn-sm">Ver Detalles</a>
+                        <a href="{% url 'core:editar_ficha' ficha.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal{{ ficha.pk }}">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Modal de confirmación de eliminación -->
+                <div class="modal fade" id="confirmDeleteModal{{ ficha.pk }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>¿Estás seguro de que deseas eliminar esta ficha clínica?</p>
+                                <p><strong>Paciente:</strong> {{ ficha.paciente.nombre_completo }}</p>
+                                <p><strong>Doctor:</strong> {{ ficha.doctor.nombre_completo }}</p>
+                                <p><strong>Fecha de Consulta:</strong> {{ ficha.fecha_consulta|date:"d/m/Y" }}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <form method="post" action="{% url 'core:eliminar_ficha' ficha.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                </form>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No hay fichas clínicas disponibles</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

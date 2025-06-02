@@ -1,0 +1,250 @@
+{% extends "components/base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Dashboard</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Opciones avanzadas</h1>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <a class="nav-link" href="{% url 'core:bloodtype_list' %}">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-tint fa-2x mb-2"></i>
+                            <h5 class="card-title">Tipo de Sangre</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a class="nav-link" href="{% url 'core:especialidad_list' %}">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-stethoscope fa-2x mb-2"></i>
+                            <h5 class="card-title">Especialidad</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a class="nav-link" href="#">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-briefcase fa-2x mb-2"></i>
+                            <h5 class="card-title">Cargos</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a class="nav-link" href="{% url 'core:doctor_list' %}">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-user-md fa-2x mb-2"></i>
+                            <h5 class="card-title">Doctores</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a class="nav-link" href="#">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-user-tie fa-2x mb-2"></i>
+                            <h5 class="card-title">Empleado</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a class="nav-link" href="{% url 'core:tipom_list' %}">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-pills fa-2x mb-2"></i>
+                            <h5 class="card-title">Tipo Medicamento</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a class="nav-link" href="{% url 'core:medicamento_list' %}">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-capsules fa-2x mb-2"></i>
+                            <h5 class="card-title">Medicamento</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a class="nav-link" href="{% url 'core:diagnostic_list' %}">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-stethoscope fa-2x mb-2"></i>
+                            <h5 class="card-title">Diagnóstico</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a class="nav-link" href="{% url 'core:examen_list' %}">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-vial fa-2x mb-2"></i>
+                            <h5 class="card-title">Examen</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a class="nav-link" href="#">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-tags fa-2x mb-2"></i>
+                            <h5 class="card-title">Tipo Categoría</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <a class="nav-link" href="{% url 'core:auditoria_list' %}">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-file-alt fa-2x mb-2"></i>
+                            <h5 class="card-title">Auditoría</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+<title>Dashboard - Gráficos de Citas y Atenciones</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h1>Dashboard del Doctor</h1>
+
+<!-- Gráfico de barras para las citas -->
+<h2>Citas por Mes</h2>
+<canvas id="citasBarChart"></canvas>
+
+<!-- Gráfico de barras para las atenciones -->
+<h2>Atenciones por Mes</h2>
+<canvas id="atencionesBarChart"></canvas>
+
+<!-- Gráfico de pastel para las citas -->
+<h2>Citas por Paciente</h2>
+<canvas id="citasPieChart"></canvas>
+
+<!-- Gráfico de pastel para las atenciones -->
+<h2>Atenciones por Paciente</h2>
+<canvas id="atencionesPieChart"></canvas>
+
+<script>
+    // Obtener los datos de las vistas pasados a través del contexto del template
+    var citasData = JSON.parse('{{ citas_data|escapejs }}');
+    var atencionesData = JSON.parse('{{ atenciones_data|escapejs }}');
+
+    // Gráfico de barras para las citas
+    var ctx = document.getElementById('citasBarChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: citasData.labels,  // Los meses de las citas
+            datasets: [{
+                label: 'Número de Citas',
+                data: citasData.data,   // El número de citas por mes
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Gráfico de barras para las atenciones
+    var ctx2 = document.getElementById('atencionesBarChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: atencionesData.labels,  // Los meses de las atenciones
+            datasets: [{
+                label: 'Número de Atenciones',
+                data: atencionesData.data,   // El número de atenciones por mes
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Gráfico de pastel para las citas
+    var ctx3 = document.getElementById('citasPieChart').getContext('2d');
+    new Chart(ctx3, {
+        type: 'pie',
+        data: {
+            labels: citasData.labels,  // Los meses de las citas
+            datasets: [{
+                label: 'Citas por Mes',
+                data: citasData.data,  // El número de citas por mes
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+                borderColor: 'white',
+                borderWidth: 1
+            }]
+        }
+    });
+
+    // Gráfico de pastel para las atenciones
+    var ctx4 = document.getElementById('atencionesPieChart').getContext('2d');
+    new Chart(ctx4, {
+        type: 'pie',
+        data: {
+            labels: atencionesData.labels,  // Los meses de las atenciones
+            datasets: [{
+                label: 'Atenciones por Mes',
+                data: atencionesData.data,  // El número de atenciones por mes
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+                borderColor: 'white',
+                borderWidth: 1
+            }]
+        }
+    });
+</script>
+
+</body>
+</html>
+
+
+
+<nav>
+    <ul>
+        <li><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+    </ul>
+</nav>
+
+</html>
+{% endblock %}

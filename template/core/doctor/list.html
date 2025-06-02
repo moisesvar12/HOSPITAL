@@ -1,0 +1,155 @@
+{% extends "components/base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 px-md-4 main-content">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title mb-0">Listado de Doctores</h5>
+                    </div>
+                    <!-- Search and Filter -->
+                    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between g-3 mb-4">
+                        <form method="GET" action="{% url 'core:doctor_list' %}" class="d-flex flex-column flex-md-row gap-3 align-items-md-center">
+                            <div class="col-md-6">
+                                <input type="text" name="q" class="form-control" value="{{ request.GET.q }}" placeholder="Buscar Doctor...">
+                            </div>
+                        </form>
+                        <a class="btn btn-primary mt-3 mt-md-0" href="{% url 'core:doctor_create' %}">
+                            <i class="fas fa-plus me-2"></i>Nuevo Doctor
+                        </a>
+                    </div>
+
+                    <!-- Doctor Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Doctor</th>
+                                    <th>Especialidades</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in doctores %}
+                                <tr>
+                                    <!-- Nombre del Doctor e Imagen -->
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src={{item.get_image}} class="rounded-circle me-3" width="30px">
+                                            <div>
+                                                <div class="fw-bold">{{ item.nombre_completo }}</div>
+                                                <small class="text-muted">ID: {{ item.id }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <!-- Especialidades -->
+                                    <td>
+                                        {% if item.especialidad.all %}
+                                            {% for especialidad in item.especialidad.all %}
+                                                <span class="badge bg-primary me-1">{{ especialidad.nombre }}</span>
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="text-muted">Sin especialidades</span>
+                                        {% endif %}
+                                    </td>
+                                    <!-- Estado -->
+                                    <td>
+                                        {% if item.activo %}
+                                            <span class="badge bg-success">Activo</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactivo</span>
+                                        {% endif %}
+                                    </td>
+                                    <!-- Acciones -->
+                                    <td>
+                                        <div class="action-buttons d-flex gap-2">
+                                            <button class="btn btn-info btn-sm" title="Ver Detalle" onclick="verDoctor('{{ item.id }}')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <a href="{% url 'core:doctor_update' item.id %}" class="btn btn-warning btn-sm" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            {% with id=item.id name=item.nombre_completo msg="¿Está seguro de eliminar al doctor:" %}
+                                            <button class="btn btn-danger btn-sm" onclick="confirmDelete('{{ id }}', '{{ name }}', '{{ msg|escapejs }}');">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                            {% endwith %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginación -->
+                    <nav class="d-flex justify-content-between align-items-center mt-4">
+                        <p class="text-muted mb-0">{{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ page_obj.paginator.count }} doctores</p>
+                        <ul class="pagination mb-0">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}"><i class="fas fa-chevron-left"></i></a>
+                                </li>
+                            {% endif %}
+                            {% for num in page_obj.paginator.page_range %}
+                                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}"><i class="fas fa-chevron-right"></i></a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmación de Eliminación -->
+{% include 'includes/confirm_delete_modal.html' %}
+
+<!-- Modal de Detalle del Doctor -->
+{% include 'core/doctor/includes/detail_modal.html' %}
+{% endblock %}
+
+{% block js %}
+<script>
+    function confirmDelete(id, name, msg) {
+        document.getElementById('modalMessage').innerText = `${msg} ${name}?`;
+        const form = document.getElementById('deleteForm');
+        form.action = `/doctor_delete/${id}/`;
+        const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        modal.show();
+    }
+
+    function verDoctor(id) {
+        fetch(`/doctor_detail/${id}/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('doctor-id').textContent = data.id;
+                document.getElementById('doctor-nombres').textContent = data.nombres;
+                document.getElementById('doctor-apellidos').textContent = data.apellidos;
+                document.getElementById('doctor-cedula').textContent = data.cedula;
+                document.getElementById('doctor-codigoUnicoDoctor').textContent = data.codigoUnicoDoctor;
+                document.getElementById('doctor-direccion').textContent = data.direccion;
+                document.getElementById('doctor-telefonos').textContent = data.telefonos;
+                document.getElementById('doctor-email').textContent = data.email;
+                document.getElementById('doctor-foto').src = data.foto;
+                const modal = new bootstrap.Modal(document.getElementById('doctorModal'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar los datos del doctor');
+            });
+    }
+</script>
+{% endblock %}
+

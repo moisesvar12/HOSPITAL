@@ -1,0 +1,203 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+{% block content %}
+<title>{% block title %} {{ title1 }} {% endblock title %}</title>
+
+<!-- Estilos en línea -->
+<style>
+    /* Ajuste de tamaño del logo */
+    .logo-img {
+        width: 100px; /* Ajusta el tamaño según lo necesites */
+        height: auto;
+    }
+
+    /* Estilo para botones */
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        border-radius: 25px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        font-size: 1.2em;
+    }
+
+    /* Estilo del contenedor principal */
+    .form-container {
+        background-color: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+    }
+
+    /* Estilo de la fila del formulario */
+    .form-row {
+        margin-bottom: 15px;
+    }
+
+    /* Espaciado entre los campos */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Estilo para mostrar la imagen seleccionada */
+    .image-preview {
+        max-width: 150px;
+        max-height: 150px;
+        display: block;
+        margin-top: 10px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+
+    .image-container {
+        margin-top: 10px;
+    }
+</style>
+
+<div class="bg-light p-4">
+    <div class="container">
+        <section class="p-4 mx-auto my-4 max-w-4xl form-container">
+            <h1 class="text-4xl text-center mt-6 text-primary mb-2">{{ title2 }}</h1>
+            <p class="text-center my-6 text-secondary text-lg">¡Únete a nuestra comunidad!</p>
+
+            <div class="text-center mb-4">
+                <img src="{% static 'img/login.png' %}" class="img-fluid rounded-circle" alt="Signup Image" style="max-width: 150px;">
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <form method="POST" enctype="multipart/form-data" class="w-100">
+                    {% csrf_token %}
+
+                    <!-- Fila 1 -->
+                    <div class="row form-row">
+                        <div class="col-md-6 form-group">
+                            <label for="{{ form.image.id_for_label }}" class="form-label text-primary">{{ form.image.label }}</label>
+                            {{ form.image }}
+                            <div class="image-container">
+                                <!-- Aquí se mostrará la imagen seleccionada -->
+                                <img id="image-preview" class="image-preview" src="#" alt="Imagen seleccionada" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="{{ form.username.id_for_label }}" class="form-label text-primary">{{ form.username.label }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon1">@</span>
+                                {{ form.username }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fila 2 -->
+                    <div class="row form-row">
+                        <div class="col-md-6 form-group">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label text-primary">{{ form.first_name.label }}</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="{{ form.dni.id_for_label }}" class="form-label text-primary">{{ form.dni.label }}</label>
+                            {{ form.dni }}
+                        </div>
+                    </div>
+
+                    <!-- Fila 3 -->
+                    <div class="row form-row">
+                        <div class="col-md-6 form-group">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label text-primary">{{ form.last_name.label }}</label>
+                            {{ form.last_name }}
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="{{ form.phone.id_for_label }}" class="form-label text-primary">{{ form.phone.label }}</label>
+                            {{ form.phone }}
+                        </div>
+                    </div>
+
+                    <!-- Fila 4 -->
+                    <div class="row form-row">
+                        <div class="col-md-6 form-group">
+                            <label for="{{ form.email.id_for_label }}" class="form-label text-primary">{{ form.email.label }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon2">@example.com</span>
+                                {{ form.email }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label text-primary">{{ form.password1.label }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                {{ form.password1 }}
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword1">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fila 5 -->
+                    <div class="row form-row">
+                        <div class="col-md-6 form-group">
+                            <label for="{{ form.password2.id_for_label }}" class="form-label text-primary">{{ form.password2.label }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                {{ form.password2 }}
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón de Submit -->
+                    <div class="text-center mb-4">
+                        <button type="submit" class="btn-submit">Registrarse</button>
+                    </div>
+                </form>
+            </div>
+            <p class="text-center">
+                ¿Ya tienes una cuenta? <a href="{% url 'security:face_login' %}" class="text-primary">Reconocimiento Biometrico</a>
+            </p>
+            <!-- Enlace a Login -->
+            <p class="text-center">
+                ¿Ya tienes una cuenta? <a href="{% url 'security:auth_login' %}" class="text-primary">Inicia sesión aquí</a>
+            </p>
+        </section>
+    </div>
+</div>
+
+<script>
+    // Función para mostrar la imagen seleccionada
+    document.getElementById("id_image").addEventListener("change", function(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var output = document.getElementById("image-preview");
+            output.style.display = "block";  // Mostrar la imagen
+            output.src = reader.result;  // Asignar la imagen seleccionada
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    });
+
+    document.getElementById("togglePassword1").addEventListener("click", function () {
+        togglePasswordVisibility("id_password1", "togglePassword1");
+    });
+
+    document.getElementById("togglePassword2").addEventListener("click", function () {
+        togglePasswordVisibility("id_password2", "togglePassword2");
+    });
+
+    function togglePasswordVisibility(passwordFieldId, toggleButtonId) {
+        var passwordInput = document.getElementById(passwordFieldId);
+        var icon = document.getElementById(toggleButtonId).querySelector("i");
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+</script>
+
+{% endblock content %}

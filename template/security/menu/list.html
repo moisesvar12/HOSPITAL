@@ -1,0 +1,161 @@
+{% extends 'components/base.html' %}
+{% block content %}
+    {% load static %}
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-md-12 col-lg-12 px-md-4 main-content">
+                <!-- Audit User List Content -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <!-- Título -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="card-title mb-0 text-primary-emphasis fw-bold">{{ title1 }}</h3>
+                        </div>
+
+                        <!-- Barra de búsqueda -->
+                        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+                            <form method="GET" action="{% url 'security:menu_list' %}">
+                                <input type="text" name="q" id="table-search"
+                                       class="form-control search-box"
+                                       placeholder="Buscar menú" value="{{ request.GET.q }}"
+                                       autocomplete="off">
+                            </form>
+                            {% if permissions.add_menu %}
+                                <a class="btn btn-primary mt-3 mt-md-0" href="{% url 'security:menu_create' %}"
+                                   style="background-color: #3B3BBA; color: white">
+                                    <i class="fas fa-plus fa-lg me-2"></i>{{ title2 }}
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <!-- Tabla de Menús -->
+                        <div class="table-responsive">
+                            <table class="table table-hover text-center">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Menú</th>
+                                    <th>Icono</th>
+                                    <th>Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in menus %}
+                                    <tr>
+                                        <td>{{ item.id }}</td>
+                                        <td>{{ item.name }}</td>
+                                        <td><i class="{{ item.icon }} fa-lg"></i></td>
+                                        <td>
+                                            <div>
+                                                {% if permissions.change_menu %}
+                                                    <a href="{% url 'security:menu_update' item.id %}"
+                                                       class="btn btn-info btn-sm text-white" title="Editar">
+                                                        <i class="fas fa-edit fa-lg"></i>
+                                                    </a>
+                                                {% endif %}
+
+                                                {% if item.has_related_objects %}
+                                                    <button class="btn btn-danger btn-sm" disabled
+                                                            title="No se puede eliminar Menú Relacionado.">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                {% else %}
+                                                    {% if permissions.delete_menu %}
+                                                        <button class="btn btn-danger btn-sm"
+                                                                onclick="openDeleteModal('{{ item.id }}', '{{ item.name }}');">
+                                                            <i class="fa-solid fa-trash fa-lg"></i>
+                                                        </button>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Paginación -->
+                        <div class="d-flex justify-content-center mt-4">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    {% if page_obj.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                                        </li>
+                                    {% endif %}
+                                    {% for num in page_obj.paginator.page_range %}
+                                        <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                        </li>
+                                    {% endfor %}
+                                    {% if page_obj.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+<div class="modall" id="confirmDeleteModal">
+    <div class="modal-contentt">
+        <p id="modalMessage"></p>
+        <form method="POST" id="deleteForm">
+            {% csrf_token %}
+            <div id="Description" class="my-2"></div>
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+        </form>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+    function openDeleteModal(id, name) {
+        // Establece el mensaje de confirmación en el modal
+        document.getElementById('modalMessage').innerText = `¿Estás seguro de que quieres eliminar el menú ${name}?`;
+        const form = document.getElementById('deleteForm');
+        form.action = "{% url 'security:menu_delete' 999 %}".replace('999', id);
+        document.getElementById('Description').textContent = `ID: ${id} - ${name}`;
+        // Muestra el modal
+        document.getElementById('confirmDeleteModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        // Cierra el modal
+        document.getElementById('confirmDeleteModal').style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+        // Cierra el modal si se hace clic fuera de él
+        const modal = document.getElementById('confirmDeleteModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    function openModal(permissions) {
+        const modal = document.getElementById('permissionsModal');
+        const list = document.getElementById('permissionsList');
+
+        list.innerHTML = ''; // Limpiar permisos previos
+        permissions.split(',').forEach(permission => {
+            const li = document.createElement('li');
+            li.textContent = permission.trim();
+            list.appendChild(li);
+        });
+
+        modal.style.display = 'block';
+    }
+</script>
+{% endblock %}
+
+

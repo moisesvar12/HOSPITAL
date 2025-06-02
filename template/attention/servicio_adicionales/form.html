@@ -1,0 +1,49 @@
+{% extends "components/base.html" %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href={% static 'css/form.css' %}>
+{% endblock %}
+
+{% block content %} 
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12 col-lg-12 px-md-4 main-content">
+        <!-- mensajes de error del formulario -->
+        {% include 'includes/message_error_form.html' %}
+        <!-- Formulario de servicios adicionales -->
+        <form method="post" enctype="multipart/form-data" class="py-4">
+            {% csrf_token %}  
+            <div class="card shadow p-4">
+                <h3 class="text-primary-emphasis mb-4 fw-bold">{{ title1 }}</h3>
+                <div class="row g-0">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.nombre_servicio.id_for_label }}" class="form-label fw-bold">{{ form.nombre_servicio.label }}</label>
+                        {{ form.nombre_servicio }}
+                        {{ form.nombre_servicio.errors }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.costo_servicio.id_for_label }}" class="form-label fw-bold">{{ form.costo_servicio.label }}</label>
+                        {{ form.costo_servicio }}
+                        {{ form.costo_servicio.errors }}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold">{{ form.descripcion.label }}</label>
+                        {{ form.descripcion }}
+                        {{ form.descripcion.errors }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.activo.id_for_label }}" class="form-label fw-bold">{{ form.activo.label }}</label>
+                        {{ form.activo }}
+                        {{ form.activo.errors }}
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mt-4">
+                    <button class="btn btn-outline-success me-2" type="submit">Guardar Servicio</button>
+                    <a class="btn btn-outline-warning" href="{% url 'attention:servicio_list' %}">Cancelar</a>
+                </div>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

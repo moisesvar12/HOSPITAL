@@ -1,0 +1,25 @@
+{% extends "components/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Detalle de Cita Médica</h1>
+    <table class="table table-bordered">
+        <tr>
+            <th>Paciente</th>
+            <td>{{ cita.paciente }}</td>
+        </tr>
+        <tr>
+            <th>Fecha</th>
+            <td>{{ cita.fecha }}</td>
+        </tr>
+        <tr>
+            <th>Hora de la Cita</th>
+            <td>{{ cita.hora_cita }}</td>
+        </tr>
+        <tr>
+            <th>Estado</th>
+            <td>{{ cita.get_estado_display }}</td>
+        </tr>
+    </table>
+    <a href="{% url 'core:cita_list' %}" class="btn btn-secondary">Volver a la lista</a>
+</div>
+{% endblock %}

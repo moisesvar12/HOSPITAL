@@ -1,0 +1,148 @@
+{% extends 'components/base.html' %}
+{% load static %}
+{% block content %}
+<title>{% block title %} {{ title1 }} {% endblock title %}</title>
+
+
+<!-- Sección principal -->
+<section class="dark:bg-principal mt-20">
+    <div class="text-center" data-aos="fade" data-aos-delay="200">
+        <div class="sm:pt-28 lg:pt-24">
+            <div class="flex flex-col items-center justify-center">
+            </div>
+            <h1 class="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-orange-500 to-yellow-500 text-4xl text-center mt-6 font-Pacifico">
+                {{ title2 }}
+            </h1>
+            <p class="text-gray-800 dark:text-gray-300 text-center mt-6 text-lg font-light">
+                Visualice su información.
+            </p>
+        </div>
+
+        <!-- Formulario de perfil -->
+        <form method="post" enctype="multipart/form-data" class="space-y-6 py-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mx-4 lg:mx-20" data-aos="fade">
+                
+                <!-- Columna de la izquierda (Imagen de perfil) -->
+                <div class="bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 rounded-3xl flex flex-col justify-center items-center p-8 shadow-xl" data-aos="fade-right" data-aos-delay="200">
+                    <div class="w-[60%] text-center">
+                        <h2 class="text-yellow-300 text-2xl text-center mt-6 font-Pacifico">Imagen de Perfil</h2><br>
+                        <div id="imagenPreview">
+                            {% if user.get_image %}
+                                <img src="{{ user.get_image }}" class="mx-auto d-block rounded-lg" alt="Foto de perfil" style="max-width: 150px; max-height: 150px; object-fit: cover;">
+                            {% else %}
+                                <img src="{% static 'img/default_person.png' %}" class="mx-auto d-block rounded-lg" alt="Foto de perfil por defecto" style="max-width: 150px; max-height: 150px; object-fit: cover;">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="text-center w-auto m-4">
+                        <a class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 text-white py-2 px-4 rounded-full mr-2 flex items-center justify-center transition duration-300" href="{% url 'security:edit_profile' %}">
+                            <i class="fa-solid fa-file-pen mr-2"></i> Actualizar Datos
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Columna de la derecha (Datos de usuario) -->
+                <div class="bg-gradient-to-br from-teal-500 via-cyan-400 to-purple-500 p-4 rounded-3xl flex flex-col justify-center items-center shadow-xl" data-aos="fade-right" data-aos-delay="200">
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <p class="text-gray-700 dark:text-gray-200 text-xl"><span class="text-pink-400 font-black uppercase text-2xl">Usuario:</span><br>{{ user.username }}
+                                {% if user.is_superuser %}
+                                    <span class="text-green-300 font-black text-2xl"> | Administrador</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-gray-700 dark:text-gray-200 text-xl"><span class="text-pink-400 font-black uppercase text-2xl">Nombres:</span><br>{{ user.first_name }} {{ user.last_name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-700 dark:text-gray-200 text-xl"><span class="text-pink-400 font-black uppercase text-2xl">Cédula:</span><br>{{ user.dni }}</p>
+                        </div>
+                        <div>
+                            {% if user.phone %}
+                                <p class="text-gray-700 dark:text-gray-200 text-xl"><span class="text-pink-400 font-black uppercase text-2xl">Teléfono:</span><br>{{ user.phone }}</p>
+                            {% else %}
+                                <p class="text-gray-700 dark:text-gray-200 text-xl"><span class="text-pink-400 font-black uppercase text-2xl">Teléfono:</span><br>No Registrado</p>
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if user.email %}
+                                <p class="text-gray-700 dark:text-gray-200 text-xl"><span class="text-pink-400 font-black uppercase text-2xl">Correo:</span><br><a href="mailto:{{ user.email }}" class="text-blue-400">{{ user.email }}</a></p>
+                            {% else %}
+                                <p class="text-gray-700 dark:text-gray-200 text-xl"><span class="text-pink-400 font-black uppercase text-2xl">Correo:</span><br>No Registrado</p>
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if user.direction %}
+                                <p class="text-gray-700 dark:text-gray-200 text-xl"><span class="text-pink-400 font-black uppercase text-2xl">Dirección:</span><br>{{ user.direction }}</p>
+                            {% else %}
+                                <p class="text-gray-700 dark:text-gray-200 text-xl"><span class="text-pink-400 font-black uppercase text-2xl">Dirección:</span><br>No Registrado</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="text-center mt-10 w-10">
+                        <a class="bg-gradient-to-r from-yellow-400 to-pink-500 hover:from-pink-500 hover:to-yellow-400 text-white py-2 px-4 rounded-full flex items-center justify-center transition duration-300" href="{% url 'core:home' %}">
+                            <i class="fa-solid fa-house"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Estilos CSS adicionales -->
+<style>
+    .dark:bg-principal {
+        background-color: #1a202c;
+    }
+
+    .text-gradient {
+        background-image: linear-gradient(to right, #f06, #4caf50);
+    }
+
+    .text-gray-700 {
+        color: #4a5568;
+    }
+
+    .font-Pacifico {
+        font-family: 'Pacifico', sans-serif;
+    }
+
+    .bg-gradient-to-r {
+        background-image: linear-gradient(to right, #ff7e5f, #feb47b);
+    }
+
+    .hover\:bg-gradient-to-r:hover {
+        background-image: linear-gradient(to right, #feb47b, #ff7e5f);
+    }
+
+    .shadow-xl {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    #imagenPreview img {
+        max-width: 150px;
+        max-height: 150px;
+        object-fit: cover;
+    }
+</style>
+
+<!-- Script JavaScript adicional -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Animaciones de AOS
+        AOS.init();
+
+        // Agregar interactividad si es necesario
+        // Ejemplo: Si se desea actualizar la imagen de perfil
+        document.getElementById('imagenPreview').addEventListener('click', function() {
+            alert('Imagen de perfil actualizada!');
+        });
+    });
+</script>
+
+{% endblock content %}

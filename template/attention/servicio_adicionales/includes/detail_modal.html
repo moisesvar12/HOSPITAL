@@ -1,0 +1,44 @@
+<div class="modal fade" id="servicioAdicionalModal" tabindex="-1" aria-labelledby="servicioAdicionalModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Encabezado del modal -->
+            <div class="modal-header bg-success bg-opacity-75">
+                <h5 class="modal-title text-white fw-bold" id="servicioAdicionalModalLabel">
+                    <i class="fas fa-concierge-bell me-2"></i>Detalles del Servicio Adicional
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Cuerpo del modal -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>
+                            <strong><i class="fas fa-file-alt me-2"></i>Nombre del Servicio:</strong> 
+                            <span id="servicio-nombre"></span>
+                        </p>
+                        <p>
+                            <strong><i class="fas fa-money-bill me-2"></i>Costo:</strong> 
+                            $<span id="servicio-costo"></span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>
+                            <strong><i class="fas fa-info-circle me-2"></i>Descripción:</strong> 
+                            <span id="servicio-descripcion"></span>
+                        </p>
+                        <p>
+                            <strong><i class="fas fa-toggle-on me-2"></i>Estado:</strong> 
+                            <span id="servicio-estado"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Pie del modal -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

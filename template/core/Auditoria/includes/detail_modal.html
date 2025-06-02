@@ -1,0 +1,26 @@
+{% extends "components/base.html" %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12 col-lg-12 px-md-4 main-content">
+        
+        <div class="card mb-4">
+          <div class="card-body">
+            <h3 class="text-primary-emphasis mb-4">Detalles de Auditoría</h3>
+            
+            <p><strong>Entidad:</strong> {{ auditoria.entidad }}</p>
+            <p><strong>Evento:</strong> {{ auditoria.get_evento_display }}</p>
+            <p><strong>Usuario:</strong> {{ auditoria.usuario.username }}</p>
+            <p><strong>Fecha:</strong> {{ auditoria.fecha }}</p>
+
+            <h5>Datos Anteriores:</h5>
+            <pre>{{ auditoria.datos_anteriores }}</pre>
+            <h5>Datos Nuevos:</h5>
+            <pre>{{ auditoria.datos_nuevos }}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
